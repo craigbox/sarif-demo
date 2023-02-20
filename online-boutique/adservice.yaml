@@ -33,6 +33,14 @@ spec:
         # steve said it was ok to allow this
         securityContext:
           runAsRoot: true        
+          capabilities:
+            drop:
+              - NET_RAW
+          seccompProfile:
+            type: RuntimeDefault
+          allowPrivilegeEscalation: false
+          readOnlyRootFilesystem: true
+          runAsNonRoot: true
         ports:
         - containerPort: 9555
         env:
@@ -61,6 +69,9 @@ spec:
           periodSeconds: 15
           exec:
             command: ["/bin/grpc_health_probe", "-addr=:9555"]
+      securityContext:
+        runAsNonRoot: true
+        allowPrivilegeEscalation: false
 ---
 apiVersion: v1
 kind: Service
