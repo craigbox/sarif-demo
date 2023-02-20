@@ -1,17 +1,20 @@
-name: Suggest autofixes with Kubescape
+name: Kubescape scanning for misconfigurations
 on: [push, pull_request]
 jobs:
   kubescape:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-      with:
-        fetch-depth: 0
-    - name: Get changed files
-      id: changed-files
-      uses: tj-actions/changed-files@v14.6
     - uses: kubescape/github-action@main
+      continue-on-error: true
       with:
-        files: ${{ steps.changed-files.outputs.all_changed_files }}
-        fixFiles: true
-        format: "sarif"
+        format: sarif
+        outputFile: results
+        # # Optional: Specify the Kubescape cloud account ID
+        # account: ${{secrets.KUBESCAPE_ACCOUNT}}
+        # # Optional: Scan a specific path. Default will scan the whole repository
+        # files: "examples/*.yaml"
+    - name: Upload Kubescape scan results to Github Code Scanning
+      uses: github/codeql-action/upload-sarif@v2
+      with:
+        sarif_file: results.sarif
