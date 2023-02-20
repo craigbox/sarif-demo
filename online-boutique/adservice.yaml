@@ -30,7 +30,7 @@ spec:
       containers:
       - name: server
         image: adservice
-        # steve said this was ok
+        # the permission will increase until morale improves
         securityContext:
           runAsRoot: true        
         ports:
